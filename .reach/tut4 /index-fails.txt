@@ -1,0 +1,41 @@
+Verifying knowledge assertions
+Verification failed:
+  of theorem unknowable("Bob", handAlice/87)
+  at ./index.rsh:28:15:application
+
+  Bob knows of handAlice/87 because it is published.
+
+Verifying for generic connector
+  Verifying when ALL participants are honest
+Verification failed:
+  when ALL participants are honest
+  of theorem: assert
+  msg: "balance zero at application exit"
+  at ./index.rsh:8:30:compileDApp
+
+  // Violation Witness
+
+  const UInt.max = 2;
+
+  const wager/81 = "Alice".interact.wager;
+  //    ^ could = 1
+  //      from: ./index.rsh:12:14:property binding
+  const handAlice/84 = protect<UInt>("Alice".interact.getHand());
+  //    ^ could = 0
+  //      from: ./index.rsh:23:54:application
+  const handBob/94 = protect<UInt>("Bob".interact.getHand());
+  //    ^ could = 2
+  //      from: ./index.rsh:31:52:application
+
+  // Theorem Formalization
+
+  const outcome/103 = (handAlice/84 + (4 - handBob/94)) % 3;
+  //    ^ would be 2
+  const v110 = ((outcome/103 == 2) ? [1, 0 ] : ((outcome/103 == 0) ? [0, 2 ] : [1, 1 ]));
+  //    ^ would be [1, 0 ]
+  const v124 = 0 == (((wager/81 + wager/81) - (v110[0] * wager/81)) - (v110[1] * wager/81));
+  //    ^ would be false
+  assert(v124);
+
+  Verifying when NO participants are honest
+Checked 13 theorems; 3 failures (and 1 omitted repeats) :'(
